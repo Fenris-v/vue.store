@@ -3,7 +3,7 @@
     <li class="colors__item" v-for="color in getColors" :key="productId + '-' + color.id">
       <label class="colors__label" :title="color.name">
         <input class="colors__radio sr-only" type="radio"
-               :name="'product-color-' + productId"
+               :name="'product-color-' + productId" :key="productId + '-' + color.id"
                :value="color.id" v-model="color.value">
         <span class="colors__value" :style="{'background-color': color.value}">
                   </span>
