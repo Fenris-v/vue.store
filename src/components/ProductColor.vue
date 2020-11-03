@@ -1,12 +1,16 @@
 <template>
-  <ul class="colors colors--black">
+  <ul class="colors" :class="{'colors--black': productId}">
+    <li class="colors__item">
+      <label class="colors__label">
+        <input class="colors__radio sr-only" type="radio"
+               v-model="localColor" value="0">
+      </label>
+    </li>
     <li class="colors__item" v-for="color in getColors" :key="productId + '-' + color.id">
       <label class="colors__label" :title="color.name">
         <input class="colors__radio sr-only" type="radio"
-               :name="'product-color-' + productId" :key="productId + '-' + color.id"
-               :value="color.id" v-model="color.value">
-        <span class="colors__value" :style="{'background-color': color.value}">
-                  </span>
+               :value="color.id" v-model="localColor">
+        <span class="colors__value" :style="{'background-color': color.value}"></span>
       </label>
     </li>
   </ul>
@@ -17,11 +21,20 @@ import colors from '@/data/colors';
 
 export default {
   name: 'ProductColor',
-  props: ['colorIds', 'productId'],
+  props: ['colorIds', 'currentColor', 'productId'],
   data() {
     return {
-      colors,
+      localColor: this.colorIds !== undefined ? this.colorIds[0] : null,
     };
+  },
+  watch: {
+    localColor() {
+      this.$emit('update:currentColor', this.localColor);
+    },
+  },
+  mounted() {
+    console.log(this.currentColor);
+    this.localColor = this.currentColor;
   },
   computed: {
     getColors() {
@@ -40,3 +53,8 @@ export default {
   },
 };
 </script>
+
+<style  lang="sass">
+.colors__item:first-child
+  display: none
+</style>

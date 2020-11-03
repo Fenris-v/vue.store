@@ -31,16 +31,7 @@
       <fieldset class="form__block">
         <legend class="form__legend">Цвет</legend>
 
-        <ul class="colors">
-          <li class="colors__item" v-for="color in colors" :key="color.id">
-            <label class="colors__label" :title="color.name">
-              <input class="colors__radio sr-only" type="radio" name="color"
-                     :key="color.id"
-                     :value="color.id" v-model.number="currentColorId">
-              <span class="colors__value" :style="{'background-color': color.value}"></span>
-            </label>
-          </li>
-        </ul>
+        <ProductColor :color-ids="colorsIds" :current-color.sync="currentColorId"/>
       </fieldset>
 
       <!-- <fieldset class="form__block">
@@ -117,9 +108,11 @@
 <script>
 import colors from '@/data/colors';
 import categories from '@/data/categories';
+import ProductColor from '@/components/ProductColor.vue';
 
 export default {
   name: 'ProductFilter',
+  components: { ProductColor },
   props: ['priceFrom', 'priceTo', 'categoryId', 'colorId'],
   data() {
     return {
@@ -134,6 +127,9 @@ export default {
     categories() {
       return categories;
     },
+    colorsIds() {
+      return colors.map((color) => color.id);
+    },
   },
   methods: {
     submit() {
@@ -147,6 +143,7 @@ export default {
       this.$emit('update:priceTo', 0);
       this.$emit('update:categoryId', 0);
       this.$emit('update:colorId', 0);
+      this.$emit('update:currentColorId', 0);
     },
   },
   watch: {
