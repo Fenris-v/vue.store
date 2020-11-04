@@ -1,70 +1,83 @@
 <template>
-  <section class="catalog">
+  <div class="content__catalog">
 
-    <ProductList :products="products"></ProductList>
+    <ProductFilter :price-from.sync="filterPriceFrom"
+                   :price-to.sync="filterPriceTo"
+                   :category-id.sync="filterCategoryId"
+                   :color-id.sync="filterColorId"></ProductFilter>
 
-    <ul class="catalog__pagination pagination">
-      <li class="pagination__item">
-        <a class="pagination__link pagination__link--arrow pagination__link--disabled"
-           aria-label="Предыдущая страница">
-          <svg width="8" height="14" fill="currentColor">
-            <use xlink:href="#icon-arrow-left"></use>
-          </svg>
-        </a>
-      </li>
-      <li class="pagination__item">
-        <a class="pagination__link pagination__link--current">
-          1
-        </a>
-      </li>
-      <li class="pagination__item">
-        <a class="pagination__link" href="#">
-          2
-        </a>
-      </li>
-      <li class="pagination__item">
-        <a class="pagination__link" href="#">
-          3
-        </a>
-      </li>
-      <li class="pagination__item">
-        <a class="pagination__link" href="#">
-          4
-        </a>
-      </li>
-      <li class="pagination__item">
-        <a class="pagination__link" href="#">
-          ...
-        </a>
-      </li>
-      <li class="pagination__item">
-        <a class="pagination__link" href="#">
-          10
-        </a>
-      </li>
-      <li class="pagination__item">
-        <a class="pagination__link pagination__link--arrow" href="#"
-           aria-label="Следующая страница">
-          <svg width="8" height="14" fill="currentColor">
-            <use xlink:href="#icon-arrow-right"></use>
-          </svg>
-        </a>
-      </li>
-    </ul>
-  </section>
+    <section class="catalog">
+      <ProductList :products="products"></ProductList>
+
+      <BasePagination
+        v-model="page" :count-items="countProducts" :per-page="perPage"></BasePagination>
+    </section>
+  </div>
 </template>
 
 <script>
 import products from '@/data/products';
 import ProductList from '@/components/ProductList.vue';
+import BasePagination from '@/components/BasePagination.vue';
+import ProductFilter from '@/components/ProductFilter.vue';
 
 export default {
   name: 'App',
-  components: { ProductList },
+  components: {
+    ProductFilter,
+    BasePagination,
+    ProductList,
+  },
   data() {
     return {
-      products,
+      filterPriceFrom: 0,
+      filterPriceTo: 0,
+      filterCategoryId: 0,
+      filterColorId: 0,
+
+      page: 1,
+      perPage: 6,
     };
+  },
+  computed: {
+    filteredProducts() {
+      let filteredProducts = products;
+
+      if (this.filterPriceFrom > 0) {
+        filteredProducts = filteredProducts
+          .filter((product) => product.price >= this.filterPriceFrom);
+      }
+
+      if (this.filterPriceTo > 0) {
+        filteredProducts = filteredProducts
+          .filter((product) => product.price <= this.filterPriceTo);
+      }
+
+      if (this.filterCategoryId !== 0) {
+        filteredProducts = filteredProducts
+          .filter((product) => product.categoryId === this.filterCategoryId);
+      }
+
+      if (this.filterColorId !== 0) {
+        filteredProducts = filteredProducts
+          .filter((product) => {
+            if (product.colors === undefined) {
+              return false;
+            }
+
+            return product.colors.includes(this.filterColorId);
+          });
+      }
+
+      return filteredProducts;
+    },
+    products() {
+      const offset = (this.page - 1) * this.perPage;
+      return this.filteredProducts.slice(offset, offset + this.perPage);
+    },
+    countProducts() {
+      return this.filteredProducts.length;
+    },
   },
 };
 </script>
