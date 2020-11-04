@@ -31,7 +31,8 @@
       <fieldset class="form__block">
         <legend class="form__legend">Цвет</legend>
 
-        <ProductColor :color-ids="colorsIds" :current-color.sync="currentColorId"/>
+        <ProductColor :key="computedKey" :color-ids="colorsIds"
+                      :current-color.sync="currentColorId"/>
       </fieldset>
 
       <!-- <fieldset class="form__block">
@@ -121,6 +122,7 @@ export default {
       currentPriceTo: 0,
       currentCategoryId: 0,
       currentColorId: 0,
+      computedKey: 0,
     };
   },
   computed: {
@@ -144,6 +146,7 @@ export default {
       this.$emit('update:categoryId', 0);
       this.$emit('update:colorId', 0);
       this.$emit('update:currentColorId', 0);
+      this.computedKey += 1;
     },
   },
   watch: {
