@@ -24,7 +24,7 @@ export default {
   props: ['colorIds', 'currentColor', 'productId'],
   data() {
     return {
-      localColor: this.colorIds !== undefined ? this.colorIds[0] : null,
+      localColor: null,
     };
   },
   watch: {
@@ -33,7 +33,6 @@ export default {
     },
   },
   mounted() {
-    console.log(this.currentColor);
     this.localColor = this.currentColor;
   },
   computed: {
