@@ -1,19 +1,29 @@
 <template>
-  <div class="content__catalog">
+  <main class="content container">
+    <div class="content__top content__top--catalog">
+      <h1 class="content__title">
+        Каталог
+      </h1>
+      <span class="content__info">
+        152 товара
+      </span>
+    </div>
 
-    <ProductFilter :price-from.sync="filterPriceFrom"
-                   :price-to.sync="filterPriceTo"
-                   :category-id.sync="filterCategoryId"
-                   :color-id.sync="filterColorId"
-                   @firstPage="firstPage()"></ProductFilter>
+    <div class="content__catalog">
+      <ProductFilter :price-from.sync="filterPriceFrom"
+                     :price-to.sync="filterPriceTo"
+                     :category-id.sync="filterCategoryId"
+                     :color-id.sync="filterColorId"
+                     @firstPage="firstPage()"></ProductFilter>
 
-    <section class="catalog">
-      <ProductList :products="products"></ProductList>
+      <section class="catalog">
+        <ProductList :products="products"></ProductList>
 
-      <BasePagination
-        v-model="page" :count-items="countProducts" :per-page="perPage"></BasePagination>
-    </section>
-  </div>
+        <BasePagination
+          v-model="page" :count-items="countProducts" :per-page="perPage"></BasePagination>
+      </section>
+    </div>
+  </main>
 </template>
 
 <script>

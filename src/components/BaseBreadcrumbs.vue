@@ -1,14 +1,14 @@
 <template>
   <ul class="breadcrumbs">
     <li class="breadcrumbs__item">
-      <a class="breadcrumbs__link" href="#" @click.prevent="gotoPage('main')">
+      <router-link class="breadcrumbs__link" :to="{name: 'main'}">
         Каталог
-      </a>
+      </router-link>
     </li>
     <li class="breadcrumbs__item">
-      <a class="breadcrumbs__link" href="#" @click.prevent="gotoPage('main')">
+      <router-link class="breadcrumbs__link" :to="{name: 'main'}">
         {{ category }}
-      </a>
+      </router-link>
     </li>
     <li class="breadcrumbs__item">
       <a class="breadcrumbs__link">
@@ -19,13 +19,8 @@
 </template>
 
 <script>
-import gotoPage from '@/helpers/gotoPage';
-
 export default {
   name: 'BaseBreadcrumbs',
   props: ['product', 'category'],
-  methods: {
-    gotoPage,
-  },
 };
 </script>

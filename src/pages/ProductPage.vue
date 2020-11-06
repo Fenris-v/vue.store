@@ -129,10 +129,9 @@ import priceFormatter from '@/helpers/priceFormatter';
 export default {
   name: 'ProductPage',
   components: { BaseBreadcrumbs, ProductColor },
-  props: ['pageParams'],
   computed: {
     product() {
-      return products.find((product) => product.id === this.pageParams.id);
+      return products.find((product) => product.id === +this.$route.params.id);
     },
     category() {
       return categories.find((category) => category.id === this.product.categoryId);
