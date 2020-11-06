@@ -35,67 +35,6 @@
                       :current-color.sync="currentColorId"/>
       </fieldset>
 
-      <!-- <fieldset class="form__block">
-        <legend class="form__legend">Объем в ГБ</legend>
-        <ul class="check-list">
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="volume" value="8"
-                     checked="">
-              <span class="check-list__desc">
-                    8
-                    <span>(313)</span>
-                  </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="volume" value="16">
-              <span class="check-list__desc">
-                    16
-                    <span>(461)</span>
-                  </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="volume" value="32">
-              <span class="check-list__desc">
-                    32
-                    <span>(313)</span>
-                  </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="volume" value="64">
-              <span class="check-list__desc">
-                    64
-                    <span>(313)</span>
-                  </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="volume" value="128">
-              <span class="check-list__desc">
-                    128
-                    <span>(313)</span>
-                  </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="volume" value="264">
-              <span class="check-list__desc">
-                    264
-                    <span>(313)</span>
-                  </span>
-            </label>
-          </li>
-        </ul>
-      </fieldset> -->
-
       <button class="filter__submit button button--primery" type="submit">
         Применить
       </button>
@@ -139,6 +78,7 @@ export default {
       this.$emit('update:priceTo', this.currentPriceTo);
       this.$emit('update:categoryId', this.currentCategoryId);
       this.$emit('update:colorId', this.currentColorId);
+      this.$emit('firstPage');
     },
     reset() {
       this.$emit('update:priceFrom', 0);
@@ -147,6 +87,7 @@ export default {
       this.$emit('update:colorId', 0);
       this.$emit('update:currentColorId', 0);
       this.computedKey += 1;
+      this.$emit('firstPage');
     },
   },
   watch: {

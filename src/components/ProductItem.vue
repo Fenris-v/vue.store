@@ -1,6 +1,7 @@
 <template>
   <li class="catalog__item">
-    <a class="catalog__pic" href="#">
+    <a class="catalog__pic" href="#"
+       @click.prevent="gotoPage('product', {id: product.id})">
       <img :src="product.image" :alt="product.title">
     </a>
 
@@ -11,8 +12,8 @@
     </h3>
 
     <span class="catalog__price">
-          {{ product.price }} ₽
-        </span>
+      {{ product.price | priceFormatter }} ₽
+    </span>
 
     <ProductColor :color-ids="product.colors" :product-id="product.id"></ProductColor>
   </li>
@@ -21,6 +22,8 @@
 <script>
 import colors from '@/data/colors';
 import ProductColor from '@/components/ProductColor.vue';
+import gotoPage from '@/helpers/gotoPage';
+import priceFormatter from '@/helpers/priceFormatter';
 
 export default {
   name: 'ProductItem',
@@ -41,6 +44,10 @@ export default {
       });
       return colorsArr;
     },
+    gotoPage,
+  },
+  filters: {
+    priceFormatter,
   },
 };
 </script>
