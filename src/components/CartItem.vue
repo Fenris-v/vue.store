@@ -10,21 +10,7 @@
       Артикул: {{ item.product.id }}
     </span>
 
-    <div class="form__counter">
-      <button type="button" aria-label="Убрать один товар" @click="decrement()">
-        <svg width="12" height="12" fill="currentColor">
-          <use xlink:href="#icon-minus"></use>
-        </svg>
-      </button>
-
-      <input type="text" v-model.number="amount" @blur="checkAmount()">
-
-      <button type="button" aria-label="Добавить один товар" @click="increment()">
-        <svg width="12" height="12" fill="currentColor">
-          <use xlink:href="#icon-plus"></use>
-        </svg>
-      </button>
-    </div>
+    <ChangeAmount :product-amount.sync="amount" />
 
     <b class="product__price">
       {{ item.product.price * item.amount | priceFormatter }} ₽
@@ -42,33 +28,16 @@
 <script>
 import priceFormatter from '@/helpers/priceFormatter';
 import { mapMutations } from 'vuex';
+import ChangeAmount from '@/components/ChangeAmount.vue';
 
 export default {
   name: 'CartItem',
+  components: { ChangeAmount },
   props: ['item'],
   filters: {
     priceFormatter,
   },
   methods: {
-    increment() {
-      this.amount += 1;
-      this.changeAmount();
-    },
-    decrement() {
-      if (this.amount <= 1) {
-        this.amount = 1;
-      } else {
-        this.amount -= 1;
-      }
-
-      this.changeAmount();
-    },
-    checkAmount() {
-      if (this.amount < 1) {
-        this.amount = 1;
-        this.changeAmount();
-      }
-    },
     ...mapMutations(['deleteProduct']),
   },
   computed: {

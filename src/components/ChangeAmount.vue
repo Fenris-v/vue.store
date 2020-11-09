@@ -6,7 +6,7 @@
       </svg>
     </button>
 
-    <input type="text" v-model.number="productAmount" @blur="checkAmount()">
+    <input type="text" v-model.number="amountLocal" @blur="checkAmount()">
 
     <button type="button" aria-label="Добавить один товар" @click="increment()">
       <svg width="12" height="12" fill="currentColor">
@@ -20,41 +20,31 @@
 export default {
   name: 'ChangeAmount',
   props: ['productAmount'],
+  data() {
+    return {
+      amountLocal: this.productAmount,
+    };
+  },
   methods: {
     increment() {
-      this.productAmount += 1;
-      this.changeAmount();
+      this.amountLocal += 1;
     },
     decrement() {
-      if (this.productAmount <= 1) {
-        this.productAmount = 1;
+      if (this.amountLocal <= 1) {
+        this.amountLocal = 1;
       } else {
-        this.productAmount -= 1;
+        this.amountLocal -= 1;
       }
-
-      this.changeAmount();
     },
     checkAmount() {
-      if (this.productAmount < 1) {
-        this.productAmount = 1;
-        this.changeAmount();
+      if (this.amountLocal < 1) {
+        this.amountLocal = 1;
       }
     },
-    changeAmount() {
-      this.$emit('update:productAmount', this.productAmount);
-    },
   },
-  computed: {
-    amount: {
-      get() {
-        return this.item.amount;
-      },
-      set(value) {
-        this.$store.commit('updateCartProductAmount', {
-          productId: this.item.productId,
-          amount: value,
-        });
-      },
+  watch: {
+    amountLocal(value) {
+      this.$emit('update:productAmount', value);
     },
   },
 };
