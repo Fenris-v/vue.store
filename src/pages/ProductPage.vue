@@ -1,7 +1,7 @@
 <template>
   <main class="content container">
     <div class="content__top">
-      <BaseBreadcrumbs :product="product.title" :category="category.name" />
+      <BaseBreadcrumbs :product="product.title" :category="category.name"/>
     </div>
 
     <section class="item">
@@ -18,32 +18,19 @@
           {{ product.title }}
         </h2>
         <div class="item__form">
-          <form class="form" action="#" method="POST">
+          <form class="form" action="#" method="POST" @submit.prevent="addToCart()">
             <b class="item__price">
               {{ product.price | priceFormatter }} ₽
             </b>
 
             <fieldset class="form__block">
               <legend class="form__legend">Цвет:</legend>
-              <ProductColor :color-ids="product.colors" />
+              <ProductColor :color-ids="product.colors"/>
             </fieldset>
 
             <div class="item__row">
-              <div class="form__counter">
-                <button type="button" aria-label="Убрать один товар">
-                  <svg width="12" height="12" fill="currentColor">
-                    <use xlink:href="#icon-minus"></use>
-                  </svg>
-                </button>
 
-                <input type="text" value="1" name="count">
-
-                <button type="button" aria-label="Добавить один товар">
-                  <svg width="12" height="12" fill="currentColor">
-                    <use xlink:href="#icon-plus"></use>
-                  </svg>
-                </button>
-              </div>
+              <ChangeAmount :product-amount.sync="productAmount" />
 
               <button class="button button--primery" type="submit">
                 В корзину
@@ -125,14 +112,23 @@ import products from '@/data/products';
 import categories from '@/data/categories';
 import BaseBreadcrumbs from '@/components/BaseBreadcrumbs.vue';
 import priceFormatter from '@/helpers/priceFormatter';
+import ChangeAmount from '@/components/ChangeAmount.vue';
 
 export default {
   name: 'ProductPage',
-  components: { BaseBreadcrumbs, ProductColor },
-  props: ['pageParams'],
+  data() {
+    return {
+      productAmount: 1,
+    };
+  },
+  components: {
+    ChangeAmount,
+    BaseBreadcrumbs,
+    ProductColor,
+  },
   computed: {
     product() {
-      return products.find((product) => product.id === this.pageParams.id);
+      return products.find((product) => product.id === +this.$route.params.id);
     },
     category() {
       return categories.find((category) => category.id === this.product.categoryId);
@@ -147,6 +143,15 @@ export default {
         return true;
       });
       return colorsArr;
+    },
+    addToCart() {
+      this.$store.commit(
+        'addToCart',
+        {
+          productId: this.product.id,
+          amount: this.productAmount,
+        },
+      );
     },
   },
   filters: {
