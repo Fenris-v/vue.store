@@ -18,7 +18,12 @@
         Корзина
       </h1>
       <span class="content__info">
-        {{ amount }} товара
+        {{ amount }}
+        <span v-if="amount % 10 === 0 ||
+            amount % 10 >= 5 && amount % 10 <= 9 ||
+            amount % 100 >= 11 && amount % 100 <= 19">товаров</span>
+        <span v-else-if="amount % 10 === 1">товар</span>
+        <span v-else>товара</span>
       </span>
     </div>
 
@@ -61,3 +66,9 @@ export default {
   },
 };
 </script>
+
+<style lang="sass">
+.product__pic img
+  max-height: 120px
+  max-width: 120px
+</style>

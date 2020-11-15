@@ -27,7 +27,7 @@
 
 <script>
 import priceFormatter from '@/helpers/priceFormatter';
-import { mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 import ChangeAmount from '@/components/ChangeAmount.vue';
 
 export default {
@@ -38,7 +38,10 @@ export default {
     priceFormatter,
   },
   methods: {
-    ...mapMutations(['deleteProduct']),
+    ...mapActions(['deleteProductFromCart']),
+    deleteProduct(id) {
+      this.deleteProductFromCart({ productId: id });
+    },
   },
   computed: {
     amount: {
@@ -46,7 +49,7 @@ export default {
         return this.item.amount;
       },
       set(value) {
-        this.$store.commit('updateCartProductAmount', {
+        this.$store.dispatch('updateCartProductAmount', {
           productId: this.item.productId,
           amount: value,
         });

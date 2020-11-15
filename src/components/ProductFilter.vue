@@ -22,7 +22,7 @@
                   v-model.number="currentCategoryId">
             <option value="0">Все категории</option>
             <option :value="category.id" v-for="category in categories"
-                    :key="category.id">{{ category.name }}
+                    :key="category.id">{{ category.title }}
             </option>
           </select>
         </label>
@@ -31,8 +31,9 @@
       <fieldset class="form__block">
         <legend class="form__legend">Цвет</legend>
 
-        <ProductColor :key="computedKey" :color-ids="colorsIds"
-                      :current-color.sync="currentColorId"/>
+        <ProductColor :key="computedKey" :color-ids="false"
+                      :current-color.sync="currentColorId"
+                      :color-list="colorList" />
       </fieldset>
 
       <button class="filter__submit button button--primery" type="submit">
@@ -46,30 +47,35 @@
 </template>
 
 <script>
-import colors from '@/data/colors';
-import categories from '@/data/categories';
 import ProductColor from '@/components/ProductColor.vue';
+import axios from 'axios';
+import { API_BASE_URL } from '@/config';
 
 export default {
   name: 'ProductFilter',
   components: { ProductColor },
-  props: ['priceFrom', 'priceTo', 'categoryId', 'colorId'],
+  props: ['priceFrom', 'priceTo', 'categoryId', 'colorId', 'colorList'],
   data() {
     return {
-      colors,
       currentPriceFrom: 0,
       currentPriceTo: 0,
       currentCategoryId: 0,
       currentColorId: 0,
       computedKey: 0,
+
+      categoriesData: null,
     };
   },
   computed: {
     categories() {
-      return categories;
+      return this.categoriesData ? this.categoriesData.items : [];
     },
     colorsIds() {
-      return colors.map((color) => color.id);
+      return this.colorsData
+        ? this.colorsData.forEach((color) => {
+          console.log(color);
+        })
+        : [];
     },
   },
   methods: {
@@ -89,6 +95,12 @@ export default {
       this.computedKey += 1;
       this.$emit('firstPage');
     },
+    loadCategories() {
+      axios.get(`${API_BASE_URL}/api/productCategories`)
+        .then((response) => {
+          this.categoriesData = response.data;
+        });
+    },
   },
   watch: {
     priceFrom(value) {
@@ -103,6 +115,9 @@ export default {
     colorId(value) {
       this.currentColorId = value;
     },
+  },
+  created() {
+    this.loadCategories();
   },
 };
 </script>

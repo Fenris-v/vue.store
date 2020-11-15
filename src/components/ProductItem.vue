@@ -14,34 +14,25 @@
       {{ product.price | priceFormatter }} ₽
     </span>
 
-    <ProductColor :color-ids="product.colors" :product-id="product.id"></ProductColor>
+    <!-- TODO: Странно, что отсюда приходится через несколько компонентов
+    TODO: передавать список цветов. -->
+    <ProductColor :color-ids="product.colors" :product-id="product.id"
+                  :color-list="colorList"/>
   </li>
 </template>
 
 <script>
-import colors from '@/data/colors';
 import ProductColor from '@/components/ProductColor.vue';
 import priceFormatter from '@/helpers/priceFormatter';
 
 export default {
   name: 'ProductItem',
   components: { ProductColor },
-  props: ['product'],
+  props: ['product', 'colorList'],
   data() {
     return {
       color: '#73B6EA',
     };
-  },
-  methods: {
-    colors(product) {
-      const colorsArr = [];
-      product.colors.map((productColor) => {
-        const colorItem = colors.filter((color) => color.id === productColor);
-        colorsArr.push(colorItem[0]);
-        return true;
-      });
-      return colorsArr;
-    },
   },
   filters: {
     priceFormatter,
