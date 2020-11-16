@@ -20,7 +20,7 @@
 <script>
 export default {
   name: 'ProductColor',
-  props: ['colorIds', 'currentColor', 'productId', 'colorList'],
+  props: ['colorIds', 'currentColor', 'productId'],
   data() {
     return {
       localColor: null,
@@ -36,7 +36,7 @@ export default {
   },
   computed: {
     colors() {
-      return this.colorList;
+      return this.$store.state.colorsData ?? [];
     },
     getColors() {
       if (this.colorIds === undefined || this.colors === undefined) {
@@ -57,6 +57,9 @@ export default {
 
       return colorsArr;
     },
+  },
+  created() {
+    this.$store.dispatch('loadColors');
   },
 };
 </script>

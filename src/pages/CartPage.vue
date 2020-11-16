@@ -3,9 +3,9 @@
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="index.html">
+          <router-link class="breadcrumbs__link" :to="{name: 'main'}">
             Каталог
-          </a>
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
           <a class="breadcrumbs__link">
@@ -18,19 +18,14 @@
         Корзина
       </h1>
       <span class="content__info">
-        {{ amount }}
-        <span v-if="amount % 10 === 0 ||
-            amount % 10 >= 5 && amount % 10 <= 9 ||
-            amount % 100 >= 11 && amount % 100 <= 19">товаров</span>
-        <span v-else-if="amount % 10 === 1">товар</span>
-        <span v-else>товара</span>
+        {{ amount | itemDeclination }}
       </span>
     </div>
 
     <section class="cart">
       <form class="cart__form form" action="#" method="POST">
         <div class="cart__field">
-          <CartList :products="products" />
+          <CartList :products="products"/>
         </div>
 
         <div class="cart__block">
@@ -51,18 +46,24 @@
 </template>
 
 <script>
-import CartList from '@/components/CartList.vue';
+import CartList from '@/components/Cart/CartList.vue';
 import { mapGetters } from 'vuex';
 import priceFormatter from '@/helpers/priceFormatter';
+import itemDeclination from '@/helpers/itemDeclination';
 
 export default {
   name: 'CartPage',
   components: { CartList },
   filters: {
     priceFormatter,
+    itemDeclination,
   },
   computed: {
-    ...mapGetters({ products: 'getProducts', total: 'totalPrice', amount: 'totalAmount' }),
+    ...mapGetters({
+      products: 'getProducts',
+      total: 'totalPrice',
+      amount: 'totalAmount',
+    }),
   },
 };
 </script>

@@ -28,7 +28,7 @@
             <fieldset class="form__block">
               <legend class="form__legend">Цвет:</legend>
 
-              <ProductColor :color-ids="colors" :color-list="allColors"/>
+              <ProductColor :color-ids="colors" />
             </fieldset>
 
             <div class="item__row">
@@ -45,81 +45,17 @@
           </form>
         </div>
       </div>
-
-<!--      <div class="item__desc">-->
-<!--        <ul class="tabs">-->
-<!--          <li class="tabs__item">-->
-<!--            <a class="tabs__link tabs__link&#45;&#45;current">-->
-<!--              Описание-->
-<!--            </a>-->
-<!--          </li>-->
-<!--          <li class="tabs__item">-->
-<!--            <a class="tabs__link" href="#">-->
-<!--              Характеристики-->
-<!--            </a>-->
-<!--          </li>-->
-<!--          <li class="tabs__item">-->
-<!--            <a class="tabs__link" href="#">-->
-<!--              Гарантия-->
-<!--            </a>-->
-<!--          </li>-->
-<!--          <li class="tabs__item">-->
-<!--            <a class="tabs__link" href="#">-->
-<!--              Оплата и доставка-->
-<!--            </a>-->
-<!--          </li>-->
-<!--        </ul>-->
-
-<!--        <div class="item__content">-->
-<!--          <p>-->
-<!--            Навигация GPS, ГЛОНАСС, BEIDOU Galileo и QZSS<br>-->
-<!--            Синхронизация со смартфоном<br>-->
-<!--            Связь по Bluetooth Smart, ANT+ и Wi-Fi<br>-->
-<!--            Поддержка сторонних приложений<br>-->
-<!--          </p>-->
-
-<!--          <a href="#">-->
-<!--            Все характеристики-->
-<!--          </a>-->
-
-<!--          <h3>Что это?</h3>-->
-
-<!--          <p>Wahoo ELEMNT BOLT GPS – это велокомпьютер, который позволяет оптимизировать-->
-<!--            свои велотренировки, сделав их максимально эффективными. Wahoo ELEMNT BOLT GPS-->
-<!--            синхронизируется с датчиками по ANT+, объединяя полученную с них информацию.-->
-<!--            Данные отображаются на дисплее, а также сохраняются на смартфоне. При этом на-->
-<!--            мобильное устройство можно установить как фирменное приложение, так и различные-->
-<!--            приложения сторонних разработчиков. Велокомпьютер
-точно отслеживает местоположение,-->
-<!--            принимая сигнал с целого комплекса спутников. Эта
-информация позволяет смотреть уже-->
-<!--            преодоленные маршруты и планировать новые велопрогулки.-->
-<!--          </p>-->
-
-<!--          <h3>Дизайн</h3>-->
-
-<!--          <p>Велокомпьютер Wahoo ELEMNT BOLT очень компактный. Размеры устройства составляют-->
-<!--            всего 74,6 x 47,3 x 22,1 мм. что не превышает габариты смартфона. Корпус гаджета-->
-<!--            выполнен из черного пластика. На обращенной к пользователю стороне расположен-->
-<!--            дисплей диагональю 56 мм. На дисплей выводятся координаты и скорость, а также-->
-<!--            полученная со смартфона и синхронизированных датчиков информация: интенсивность,-->
-<!--            скорость вращения педалей, пульс и т.д. (датчики не входят в комплект поставки).-->
-<!--            Корпус велокомпьютера имеет степень защиты от влаги IPX7. Это означает, что-->
-<!--            устройство не боится пыли, а также выдерживает кратковременное (до 30 минут)-->
-<!--            погружение в воду на глубину не более 1 метра.</p>-->
-<!--        </div>-->
-<!--      </div>-->
     </section>
   </main>
 </template>
 
 <script>
-import BaseBreadcrumbs from '@/components/BaseBreadcrumbs.vue';
+import BaseBreadcrumbs from '@/components/Base/BaseBreadcrumbs.vue';
 import priceFormatter from '@/helpers/priceFormatter';
 import ChangeAmount from '@/components/ChangeAmount.vue';
 import axios from 'axios';
 import { API_BASE_URL } from '@/config';
-import ProductColor from '@/components/ProductColor.vue';
+import ProductColor from '@/components/Product/ProductColor.vue';
 import { mapActions } from 'vuex';
 
 export default {
@@ -156,9 +92,6 @@ export default {
     colors() {
       return this.productData.colors.map((color) => color.id);
     },
-    allColors() {
-      return this.colorsData ? this.colorsData : [];
-    },
   },
   methods: {
     addToCart() {
@@ -185,12 +118,6 @@ export default {
           this.productLoading = false;
         });
     },
-    loadColors() {
-      axios.get(`${API_BASE_URL}/api/colors`)
-        .then((response) => {
-          this.colorsData = response.data.items;
-        });
-    },
     ...mapActions(['addProductToCart']),
   },
   filters: {
@@ -198,7 +125,6 @@ export default {
   },
   created() {
     this.loadProduct();
-    this.loadColors();
   },
 };
 </script>

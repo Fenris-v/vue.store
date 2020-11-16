@@ -14,15 +14,12 @@
       {{ product.price | priceFormatter }} ₽
     </span>
 
-    <!-- TODO: Странно, что отсюда приходится через несколько компонентов
-    TODO: передавать список цветов. -->
-    <ProductColor :color-ids="product.colors" :product-id="product.id"
-                  :color-list="colorList"/>
+    <ProductColor :color-ids="product.colors" :product-id="product.id" />
   </li>
 </template>
 
 <script>
-import ProductColor from '@/components/ProductColor.vue';
+import ProductColor from '@/components/Product/ProductColor.vue';
 import priceFormatter from '@/helpers/priceFormatter';
 
 export default {

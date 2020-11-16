@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import BaseHeader from '@/components/BaseHeader.vue';
-import BaseFooter from '@/components/BaseFooter.vue';
+import BaseHeader from '@/components/Base/BaseHeader.vue';
+import BaseFooter from '@/components/Base/BaseFooter.vue';
 import { mapMutations } from 'vuex';
 
 export default {

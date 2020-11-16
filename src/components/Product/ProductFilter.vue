@@ -32,8 +32,7 @@
         <legend class="form__legend">Цвет</legend>
 
         <ProductColor :key="computedKey" :color-ids="false"
-                      :current-color.sync="currentColorId"
-                      :color-list="colorList" />
+                      :current-color.sync="currentColorId" />
       </fieldset>
 
       <button class="filter__submit button button--primery" type="submit">
@@ -47,7 +46,7 @@
 </template>
 
 <script>
-import ProductColor from '@/components/ProductColor.vue';
+import ProductColor from '@/components/Product/ProductColor.vue';
 import axios from 'axios';
 import { API_BASE_URL } from '@/config';
 
@@ -69,13 +68,6 @@ export default {
   computed: {
     categories() {
       return this.categoriesData ? this.categoriesData.items : [];
-    },
-    colorsIds() {
-      return this.colorsData
-        ? this.colorsData.forEach((color) => {
-          console.log(color);
-        })
-        : [];
     },
   },
   methods: {

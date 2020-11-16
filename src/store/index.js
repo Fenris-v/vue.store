@@ -12,6 +12,8 @@ export default new Vuex.Store({
     userAccessKey: null,
 
     cartProductsData: [],
+
+    colorsData: null,
   },
   mutations: {
     updateCartProductAmount(state, { productId, amount }) {
@@ -32,6 +34,9 @@ export default new Vuex.Store({
         productId: item.product.id,
         amount: item.quantity,
       }));
+    },
+    updateColorsData(state, colors) {
+      state.colorsData = colors;
     },
   },
   getters: {
@@ -71,6 +76,12 @@ export default new Vuex.Store({
 
           context.commit('updateCartProductsData', response.data.items);
           context.commit('syncCartProducts');
+        });
+    },
+    loadColors(context) {
+      return axios.get(`${API_BASE_URL}/api/colors`)
+        .then((response) => {
+          context.commit('updateColorsData', response.data.items);
         });
     },
     addProductToCart(context, { productId, amount }) {

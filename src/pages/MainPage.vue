@@ -5,12 +5,7 @@
         Каталог
       </h1>
       <span class="content__info">
-        {{ countProducts }}
-        <span v-if="countProducts % 10 === 0 ||
-            countProducts % 10 >= 5 && countProducts % 10 <= 9 ||
-            countProducts % 100 >= 11 && countProducts % 100 <= 19">товаров</span>
-        <span v-else-if="countProducts % 10 === 1">товар</span>
-        <span v-else>товара</span>
+        {{ countProducts | itemDeclination }}
       </span>
     </div>
 
@@ -19,8 +14,7 @@
                      :price-to.sync="filterPriceTo"
                      :category-id.sync="filterCategoryId"
                      :color-id.sync="filterColorId"
-                     @firstPage="firstPage()"
-                     :color-list="colors"></ProductFilter>
+                     @firstPage="firstPage()" />
 
       <section class="catalog">
         <div v-if="productsLoading">Загрузка товаров...</div>
@@ -28,7 +22,7 @@
           Произошла ошибка
           <button @click.prevent="loadProducts()">Попробовать еще раз</button>
         </div>
-        <ProductList :products="products" :color-list="colors"></ProductList>
+        <ProductList :products="products" />
 
         <BasePagination
           v-model="page" :count-items="countProducts" :per-page="perPage"></BasePagination>
@@ -38,11 +32,12 @@
 </template>
 
 <script>
-import ProductFilter from '@/components/ProductFilter.vue';
-import BasePagination from '@/components/BasePagination.vue';
-import ProductList from '@/components/ProductList.vue';
+import ProductFilter from '@/components/Product/ProductFilter.vue';
+import BasePagination from '@/components/Base/BasePagination.vue';
+import ProductList from '@/components/Product/ProductList.vue';
 import axios from 'axios';
 import { API_BASE_URL } from '@/config';
+import itemDeclination from '@/helpers/itemDeclination';
 
 export default {
   name: 'MainPage',
@@ -79,7 +74,7 @@ export default {
         : [];
     },
     colors() {
-      return this.colorsData ? this.colorsData : [];
+      return this.colorsData || [];
     },
     countProducts() {
       return this.productsData ? this.productsData.pagination.total : 0;
@@ -116,12 +111,6 @@ export default {
           });
       }, 0);
     },
-    loadColors() {
-      axios.get(`${API_BASE_URL}/api/colors`)
-        .then((response) => {
-          this.colorsData = response.data.items;
-        });
-    },
   },
   watch: {
     page() {
@@ -142,7 +131,9 @@ export default {
   },
   created() {
     this.loadProducts();
-    this.loadColors();
+  },
+  filters: {
+    itemDeclination,
   },
 };
 </script>
