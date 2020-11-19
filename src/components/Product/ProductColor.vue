@@ -36,7 +36,7 @@ export default {
   },
   computed: {
     colors() {
-      return this.$store.state.colorsData ?? [];
+      return this.$store.state.colorsData || [];
     },
     getColors() {
       if (this.colorIds === undefined || this.colors === undefined) {

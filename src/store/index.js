@@ -14,6 +14,12 @@ export default new Vuex.Store({
     cartProductsData: [],
 
     colorsData: null,
+
+    productData: null,
+
+    productLoading: false,
+
+    productsData: null,
   },
   mutations: {
     updateCartProductAmount(state, { productId, amount }) {
@@ -37,6 +43,18 @@ export default new Vuex.Store({
     },
     updateColorsData(state, colors) {
       state.colorsData = colors;
+    },
+    updateProductData(state, item) {
+      state.productData = item;
+    },
+    updateProductLoading(state, status) {
+      state.productLoading = status;
+    },
+    updateProductLoadingFailed(state, status) {
+      state.productLoadingFailed = status;
+    },
+    updateProductsData(state, items) {
+      state.productsData = items;
     },
   },
   getters: {
@@ -141,6 +159,42 @@ export default new Vuex.Store({
         .catch(() => {
           console.error('Произошла ошибка');
         });
+    },
+    loadProduct(context, productId) {
+      context.commit('updateProductLoading', true);
+      context.commit('updateProductLoadingFailed', false);
+
+      return axios.get(`${API_BASE_URL}/api/products/${productId}`)
+        .then((response) => {
+          context.commit('updateProductData', response.data);
+        })
+        .catch(() => {
+          context.commit('updateProductLoadingFailed', true);
+        })
+        .then(() => {
+          context.commit('updateProductLoading', false);
+        });
+    },
+    loadProducts(context, params) {
+      context.commit('updateProductLoading', true);
+      context.commit('updateProductLoadingFailed', false);
+
+      clearTimeout(this.loadProductsTimer);
+      this.loadProductsTimer = setTimeout(() => {
+        axios.get(`${API_BASE_URL}/api/products`,
+          {
+            params,
+          })
+          .then((response) => {
+            context.commit('updateProductsData', response.data);
+          })
+          .catch(() => {
+            context.commit('updateProductLoadingFailed', true);
+          })
+          .then(() => {
+            context.commit('updateProductLoading', false);
+          });
+      }, 0);
     },
   },
 });

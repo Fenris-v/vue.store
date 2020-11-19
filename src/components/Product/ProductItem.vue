@@ -1,7 +1,7 @@
 <template>
   <li class="catalog__item">
     <router-link :to="{name: 'product', params: {id: product.id}}">
-      <img :src="product.image" :alt="product.title">
+      <img :src="image" :alt="product.title">
     </router-link>
 
     <h3 class="catalog__title">
@@ -11,7 +11,7 @@
     </h3>
 
     <span class="catalog__price">
-      {{ product.price | priceFormatter }} ₽
+      {{ product.price | numberFormatter }} ₽
     </span>
 
     <ProductColor :color-ids="product.colors" :product-id="product.id" />
@@ -20,7 +20,7 @@
 
 <script>
 import ProductColor from '@/components/Product/ProductColor.vue';
-import priceFormatter from '@/helpers/priceFormatter';
+import numberFormatter from '@/helpers/numberFormatter';
 
 export default {
   name: 'ProductItem',
@@ -31,8 +31,13 @@ export default {
       color: '#73B6EA',
     };
   },
+  computed: {
+    image() {
+      return this.product.image.file.url;
+    },
+  },
   filters: {
-    priceFormatter,
+    numberFormatter,
   },
 };
 </script>

@@ -53,7 +53,7 @@ import { API_BASE_URL } from '@/config';
 export default {
   name: 'ProductFilter',
   components: { ProductColor },
-  props: ['priceFrom', 'priceTo', 'categoryId', 'colorId', 'colorList'],
+  props: ['filter'],
   data() {
     return {
       currentPriceFrom: 0,
@@ -72,18 +72,23 @@ export default {
   },
   methods: {
     submit() {
-      this.$emit('update:priceFrom', this.currentPriceFrom);
-      this.$emit('update:priceTo', this.currentPriceTo);
-      this.$emit('update:categoryId', this.currentCategoryId);
-      this.$emit('update:colorId', this.currentColorId);
+      this.$emit('update:filter', {
+        filterPriceFrom: this.currentPriceFrom,
+        filterPriceTo: this.currentPriceTo,
+        filterCategoryId: this.currentCategoryId,
+        filterColorId: this.currentColorId,
+      });
+
       this.$emit('firstPage');
     },
     reset() {
-      this.$emit('update:priceFrom', 0);
-      this.$emit('update:priceTo', 0);
-      this.$emit('update:categoryId', 0);
-      this.$emit('update:colorId', 0);
-      this.$emit('update:currentColorId', 0);
+      this.$emit('update:filter', {
+        filterPriceFrom: 0,
+        filterPriceTo: 0,
+        filterCategoryId: 0,
+        filterColorId: 0,
+      });
+
       this.computedKey += 1;
       this.$emit('firstPage');
     },

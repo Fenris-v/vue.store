@@ -33,7 +33,7 @@
             Мы&nbsp;посчитаем стоимость доставки на&nbsp;следующем этапе
           </p>
           <p class="cart__price">
-            Итого: <span>{{ total | priceFormatter }} ₽</span>
+            Итого: <span>{{ total | numberFormatter }} ₽</span>
           </p>
 
           <button class="cart__button button button--primery" type="submit">
@@ -48,14 +48,14 @@
 <script>
 import CartList from '@/components/Cart/CartList.vue';
 import { mapGetters } from 'vuex';
-import priceFormatter from '@/helpers/priceFormatter';
+import numberFormatter from '@/helpers/numberFormatter';
 import itemDeclination from '@/helpers/itemDeclination';
 
 export default {
   name: 'CartPage',
   components: { CartList },
   filters: {
-    priceFormatter,
+    numberFormatter,
     itemDeclination,
   },
   computed: {

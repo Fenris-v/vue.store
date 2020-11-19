@@ -1,9 +1,9 @@
 <template>
-  <main class="content container" v-if="productLoading">Загрузка</main>
-  <main class="content container" v-else-if="!productData">Ошибка</main>
+  <main class="content container" v-if="loading">Загрузка</main>
+  <main class="content container" v-else-if="failed">Ошибка</main>
   <main class="content container" v-else>
     <div class="content__top">
-      <BaseBreadcrumbs :product="product.title" :category="category.name"/>
+      <BaseBreadcrumbs :product="product.title" :category="category.title"/>
     </div>
 
     <section class="item">
@@ -22,7 +22,7 @@
         <div class="item__form">
           <form class="form" action="#" method="POST" @submit.prevent="addToCart()">
             <b class="item__price">
-              {{ product.price | priceFormatter }} ₽
+              {{ product.price | numberFormatter }} ₽
             </b>
 
             <fieldset class="form__block">
@@ -51,10 +51,8 @@
 
 <script>
 import BaseBreadcrumbs from '@/components/Base/BaseBreadcrumbs.vue';
-import priceFormatter from '@/helpers/priceFormatter';
+import numberFormatter from '@/helpers/numberFormatter';
 import ChangeAmount from '@/components/ChangeAmount.vue';
-import axios from 'axios';
-import { API_BASE_URL } from '@/config';
 import ProductColor from '@/components/Product/ProductColor.vue';
 import { mapActions } from 'vuex';
 
@@ -65,10 +63,6 @@ export default {
       productAmount: 1,
 
       productData: null,
-      productLoading: false,
-      productLoadingFailed: false,
-
-      colorsData: null,
 
       productAdded: false,
       productAddSending: false,
@@ -80,17 +74,23 @@ export default {
     ProductColor,
   },
   computed: {
-    category() {
-      return this.productData.category;
-    },
     product() {
-      return this.productData;
+      return this.$store.state.productData || null;
+    },
+    category() {
+      return this.product.category;
     },
     image() {
-      return this.productData.image.file;
+      return this.product.image.file;
     },
     colors() {
-      return this.productData.colors.map((color) => color.id);
+      return this.product.colors.map((color) => color.id);
+    },
+    loading() {
+      return this.$store.state.productLoading;
+    },
+    failed() {
+      return this.$store.state.productLoadingFailed;
     },
   },
   methods: {
@@ -104,27 +104,13 @@ export default {
           this.productAddSending = false;
         });
     },
-    loadProduct() {
-      this.productLoading = true;
-      this.productLoadingFailed = false;
-      axios.get(`${API_BASE_URL}/api/products/${this.$route.params.id}`)
-        .then((response) => {
-          this.productData = response.data;
-        })
-        .catch(() => {
-          this.productLoadingFailed = true;
-        })
-        .then(() => {
-          this.productLoading = false;
-        });
-    },
     ...mapActions(['addProductToCart']),
   },
   filters: {
-    priceFormatter,
+    numberFormatter,
   },
   created() {
-    this.loadProduct();
+    this.$store.dispatch('loadProduct', this.$route.params.id);
   },
 };
 </script>

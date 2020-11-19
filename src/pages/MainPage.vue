@@ -10,17 +10,12 @@
     </div>
 
     <div class="content__catalog">
-      <ProductFilter :price-from.sync="filterPriceFrom"
-                     :price-to.sync="filterPriceTo"
-                     :category-id.sync="filterCategoryId"
-                     :color-id.sync="filterColorId"
-                     @firstPage="firstPage()" />
+      <ProductFilter :filter.sync="filter" @firstPage="firstPage()" />
 
       <section class="catalog">
-        <div v-if="productsLoading">Загрузка товаров...</div>
-        <div v-if="productsLoadingFailed">
+        <div v-if="loading">Загрузка товаров...</div>
+        <div v-if="failed">
           Произошла ошибка
-          <button @click.prevent="loadProducts()">Попробовать еще раз</button>
         </div>
         <ProductList :products="products" />
 
@@ -35,8 +30,6 @@
 import ProductFilter from '@/components/Product/ProductFilter.vue';
 import BasePagination from '@/components/Base/BasePagination.vue';
 import ProductList from '@/components/Product/ProductList.vue';
-import axios from 'axios';
-import { API_BASE_URL } from '@/config';
 import itemDeclination from '@/helpers/itemDeclination';
 
 export default {
@@ -48,89 +41,63 @@ export default {
   },
   data() {
     return {
-      filterPriceFrom: 0,
-      filterPriceTo: 0,
-      filterCategoryId: 0,
-      filterColorId: 0,
-
       page: 1,
       perPage: 6,
 
       productsData: null,
-      colorsData: null,
 
-      productsLoading: false,
-      productsLoadingFailed: false,
+      filter: {
+        filterPriceFrom: 0,
+        filterPriceTo: 0,
+        filterCategoryId: 0,
+        filterColorId: 0,
+      },
     };
   },
   computed: {
     products() {
-      return this.productsData
-        ? this.productsData.items.map((product) => ({
-          ...product,
-          image: product.image.file.url,
-          colors: product.colors.map((color) => color.id),
-        }))
+      return this.$store.state.productsData
+        ? this.$store.state.productsData.items
         : [];
     },
-    colors() {
-      return this.colorsData || [];
-    },
     countProducts() {
-      return this.productsData ? this.productsData.pagination.total : 0;
+      return this.$store.state.productsData ? this.$store.state.productsData.pagination.total : 0;
+    },
+    loading() {
+      return this.$store.state.productLoading;
+    },
+    failed() {
+      return this.$store.state.productLoadingFailed;
     },
   },
   methods: {
     firstPage() {
       this.page = 1;
     },
-    loadProducts() {
-      this.productsLoading = true;
-      this.productsLoadingFailed = false;
-      clearTimeout(this.loadProductsTimer);
-      this.loadProductsTimer = setTimeout(() => {
-        axios.get(`${API_BASE_URL}/api/products`,
-          {
-            params: {
-              page: this.page,
-              limit: this.perPage,
-              categoryId: this.filterCategoryId,
-              minPrice: this.filterPriceFrom,
-              maxPrice: this.filterPriceTo,
-              colorId: this.filterColorId,
-            },
-          })
-          .then((response) => {
-            this.productsData = response.data;
-          })
-          .catch(() => {
-            this.productsLoadingFailed = true;
-          })
-          .then(() => {
-            this.productsLoading = false;
-          });
-      }, 0);
+    getParams() {
+      return {
+        page: this.page,
+        limit: this.perPage,
+        categoryId: this.filter.filterCategoryId,
+        minPrice: this.filter.filterPriceFrom,
+        maxPrice: this.filter.filterPriceTo,
+        colorId: this.filter.filterColorId,
+      };
     },
   },
   watch: {
+    filter: {
+      deep: true,
+      handler() {
+        this.$store.dispatch('loadProducts', this.getParams());
+      },
+    },
     page() {
-      this.loadProducts();
-    },
-    filterPriceFrom() {
-      this.loadProducts();
-    },
-    filterPriceTo() {
-      this.loadProducts();
-    },
-    filterCategoryId() {
-      this.loadProducts();
-    },
-    filterColorId() {
-      this.loadProducts();
+      this.$store.dispatch('loadProducts', this.getParams());
     },
   },
   created() {
-    this.loadProducts();
+    this.$store.dispatch('loadProducts', this.getParams());
   },
   filters: {
     itemDeclination,
