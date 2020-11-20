@@ -6,7 +6,7 @@
 
 <script>
 
-import CartItem from '@/components/CartItem.vue';
+import CartItem from '@/components/Cart/CartItem.vue';
 
 export default {
   name: 'CartList',

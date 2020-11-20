@@ -5,19 +5,19 @@
         Каталог
       </h1>
       <span class="content__info">
-        152 товара
+        {{ countProducts | itemDeclination }}
       </span>
     </div>
 
     <div class="content__catalog">
-      <ProductFilter :price-from.sync="filterPriceFrom"
-                     :price-to.sync="filterPriceTo"
-                     :category-id.sync="filterCategoryId"
-                     :color-id.sync="filterColorId"
-                     @firstPage="firstPage()"></ProductFilter>
+      <ProductFilter :filter.sync="filter" @firstPage="firstPage()" />
 
       <section class="catalog">
-        <ProductList :products="products"></ProductList>
+        <div v-if="loading">Загрузка товаров...</div>
+        <div v-if="failed">
+          Произошла ошибка
+        </div>
+        <ProductList :products="products" />
 
         <BasePagination
           v-model="page" :count-items="countProducts" :per-page="perPage"></BasePagination>
@@ -27,10 +27,10 @@
 </template>
 
 <script>
-import ProductFilter from '@/components/ProductFilter.vue';
-import BasePagination from '@/components/BasePagination.vue';
-import ProductList from '@/components/ProductList.vue';
-import products from '@/data/products';
+import ProductFilter from '@/components/Product/ProductFilter.vue';
+import BasePagination from '@/components/Base/BasePagination.vue';
+import ProductList from '@/components/Product/ProductList.vue';
+import itemDeclination from '@/helpers/itemDeclination';
 
 export default {
   name: 'MainPage',
@@ -41,59 +41,66 @@ export default {
   },
   data() {
     return {
-      filterPriceFrom: 0,
-      filterPriceTo: 0,
-      filterCategoryId: 0,
-      filterColorId: 0,
-
       page: 1,
       perPage: 6,
+
+      productsData: null,
+
+      filter: {
+        filterPriceFrom: 0,
+        filterPriceTo: 0,
+        filterCategoryId: 0,
+        filterColorId: 0,
+      },
     };
   },
   computed: {
-    filteredProducts() {
-      let filteredProducts = products;
-
-      if (this.filterPriceFrom > 0) {
-        filteredProducts = filteredProducts
-          .filter((product) => product.price >= this.filterPriceFrom);
-      }
-
-      if (this.filterPriceTo > 0) {
-        filteredProducts = filteredProducts
-          .filter((product) => product.price <= this.filterPriceTo);
-      }
-
-      if (this.filterCategoryId !== 0) {
-        filteredProducts = filteredProducts
-          .filter((product) => product.categoryId === this.filterCategoryId);
-      }
-
-      if (this.filterColorId !== 0) {
-        filteredProducts = filteredProducts
-          .filter((product) => {
-            if (product.colors === undefined) {
-              return false;
-            }
-
-            return product.colors.includes(this.filterColorId);
-          });
-      }
-
-      return filteredProducts;
-    },
     products() {
-      const offset = (this.page - 1) * this.perPage;
-      return this.filteredProducts.slice(offset, offset + this.perPage);
+      return this.$store.state.productsData
+        ? this.$store.state.productsData.items
+        : [];
     },
     countProducts() {
-      return this.filteredProducts.length;
+      return this.$store.state.productsData ? this.$store.state.productsData.pagination.total : 0;
+    },
+    loading() {
+      return this.$store.state.productLoading;
+    },
+    failed() {
+      return this.$store.state.productLoadingFailed;
     },
   },
   methods: {
     firstPage() {
       this.page = 1;
     },
+    getParams() {
+      return {
+        page: this.page,
+        limit: this.perPage,
+        categoryId: this.filter.filterCategoryId,
+        minPrice: this.filter.filterPriceFrom,
+        maxPrice: this.filter.filterPriceTo,
+        colorId: this.filter.filterColorId,
+      };
+    },
+  },
+  watch: {
+    filter: {
+      deep: true,
+      handler() {
+        this.$store.dispatch('loadProducts', this.getParams());
+      },
+    },
+    page() {
+      this.$store.dispatch('loadProducts', this.getParams());
+    },
+  },
+  created() {
+    this.$store.dispatch('loadProducts', this.getParams());
+  },
+  filters: {
+    itemDeclination,
   },
 };
 </script>

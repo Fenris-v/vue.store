@@ -6,19 +6,18 @@
                v-model="localColor" value="0">
       </label>
     </li>
+
     <li class="colors__item" v-for="color in getColors" :key="productId + '-' + color.id">
-      <label class="colors__label" :title="color.name">
+      <label class="colors__label" :title="color.title">
         <input class="colors__radio sr-only" type="radio"
                :value="color.id" v-model="localColor">
-        <span class="colors__value" :style="{'background-color': color.value}"></span>
+        <span class="colors__value" :style="{'background-color': color.code}"></span>
       </label>
     </li>
   </ul>
 </template>
 
 <script>
-import colors from '@/data/colors';
-
 export default {
   name: 'ProductColor',
   props: ['colorIds', 'currentColor', 'productId'],
@@ -36,24 +35,36 @@ export default {
     this.localColor = this.currentColor;
   },
   computed: {
+    colors() {
+      return this.$store.state.colorsData || [];
+    },
     getColors() {
-      if (this.colorIds === undefined) {
+      if (this.colorIds === undefined || this.colors === undefined) {
         return [];
+      }
+
+      if (this.colorIds === false) {
+        return this.colors;
       }
 
       const colorsArr = [];
       this.colorIds.forEach((colorId) => {
-        const colorItem = colors.filter((color) => color.id === colorId);
-        colorsArr.push(colorItem[0]);
+        const colorItem = this.colors.filter((color) => color.id === colorId);
+        if (colorItem.length > 0) {
+          colorsArr.push(colorItem[0]);
+        }
       });
 
       return colorsArr;
     },
   },
+  created() {
+    this.$store.dispatch('loadColors');
+  },
 };
 </script>
 
-<style  lang="sass">
+<style lang="sass">
 .colors__item:first-child
   display: none
 </style>
