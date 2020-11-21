@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 import { API_BASE_URL } from '@/config';
+import router from '@/router';
 
 Vue.use(Vuex);
 
@@ -20,8 +21,26 @@ export default new Vuex.Store({
     productLoading: false,
 
     productsData: null,
+
+    orderInfo: null,
+
+    formError: {},
+    errorMsg: '',
   },
   mutations: {
+    updateFormError(state, formError) {
+      state.formError = formError;
+    },
+    updateErrorMsg(state, msg) {
+      state.errorMsg = msg;
+    },
+    updateOrderInfo(state, orderInfo) {
+      state.orderInfo = orderInfo;
+    },
+    resetCart(state) {
+      state.cartProducts = [];
+      state.cartProductsData = [];
+    },
     updateCartProductAmount(state, { productId, amount }) {
       const item = state.cartProducts.find((i) => i.productId === productId);
 
@@ -79,6 +98,39 @@ export default new Vuex.Store({
     },
   },
   actions: {
+    order(context, formData) {
+      context.commit('updateErrorMsg', '');
+      context.commit('updateFormError', {});
+
+      return axios
+        .post(`${API_BASE_URL}/api/orders`, {
+          ...formData,
+        }, {
+          params: {
+            userAccessKey: context.state.userAccessKey,
+          },
+        })
+        .then((response) => {
+          context.commit('resetCart');
+          context.commit('updateOrderInfo', response.data);
+          router.push({ name: 'orderInfo', params: { id: response.data.id } });
+        })
+        .catch((error) => {
+          context.commit('updateErrorMsg', error.response.data.error.message);
+          context.commit('updateFormError', error.response.data.error.request || {});
+        });
+    },
+    loadOrderInfo(context, orderId) {
+      return axios
+        .get(`${API_BASE_URL}/api/orders/${orderId}`, {
+          params: {
+            userAccessKey: context.state.userAccessKey,
+          },
+        })
+        .then((response) => {
+          context.commit('updateOrderInfo', response.data);
+        });
+    },
     loadCart(context) {
       return axios
         .get(`${API_BASE_URL}/api/baskets`, {
