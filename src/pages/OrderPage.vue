@@ -98,7 +98,7 @@ export default {
   mixins: [cartProductsMixin],
   methods: {
     order() {
-      if (this.formData.comment === undefined) {
+      if (!this.formData.comment) {
         this.formData.comment = ' ';
       }
 

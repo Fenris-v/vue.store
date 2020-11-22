@@ -129,6 +129,9 @@ export default new Vuex.Store({
         })
         .then((response) => {
           context.commit('updateOrderInfo', response.data);
+        })
+        .catch(() => {
+          router.push({ name: 'notFound' });
         });
     },
     loadCart(context) {

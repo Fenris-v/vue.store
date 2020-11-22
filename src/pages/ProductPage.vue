@@ -40,8 +40,8 @@
               </button>
             </div>
 
-            <div v-show="productAdded">Товар добавлен в корзину</div>
-            <div v-show="productAddSending">Добавляется...</div>
+            <div v-if="productAdded">Товар добавлен в корзину</div>
+            <div v-else-if="productAddSending">Добавляется...</div>
           </form>
         </div>
       </div>

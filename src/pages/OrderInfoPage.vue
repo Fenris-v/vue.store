@@ -73,7 +73,8 @@ export default {
     },
   },
   created() {
-    if (this.$store.state.orderInfo && this.$store.state.orderInfo.id === this.$route.params.id) {
+    const orderInfo = this.$store.state;
+    if (orderInfo && orderInfo.id === this.$route.params.id) {
       return;
     }
 
