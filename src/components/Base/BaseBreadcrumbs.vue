@@ -5,14 +5,13 @@
         Каталог
       </router-link>
     </li>
-    <li class="breadcrumbs__item">
-      <router-link class="breadcrumbs__link" :to="{name: 'main'}">
-        {{ category }}
+
+    <li class="breadcrumbs__item" v-for="crumb in list" :key="crumb.title">
+      <router-link class="breadcrumbs__link" :to="{name: crumb.link}" v-if="crumb.link">
+        {{ crumb.title }}
       </router-link>
-    </li>
-    <li class="breadcrumbs__item">
-      <a class="breadcrumbs__link">
-        {{ product }}
+      <a class="breadcrumbs__link" v-else>
+        {{ crumb.title }}
       </a>
     </li>
   </ul>
@@ -21,6 +20,6 @@
 <script>
 export default {
   name: 'BaseBreadcrumbs',
-  props: ['product', 'category'],
+  props: ['list'],
 };
 </script>

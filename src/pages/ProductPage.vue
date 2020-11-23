@@ -3,7 +3,7 @@
   <main class="content container" v-else-if="failed">Ошибка</main>
   <main class="content container" v-else>
     <div class="content__top">
-      <BaseBreadcrumbs :product="product.title" :category="category.title"/>
+      <BaseBreadcrumbs :list="breadcrumbs"/>
     </div>
 
     <section class="item">
@@ -40,8 +40,8 @@
               </button>
             </div>
 
-            <div v-show="productAdded">Товар добавлен в корзину</div>
-            <div v-show="productAddSending">Добавляется...</div>
+            <div v-if="productAdded">Товар добавлен в корзину</div>
+            <div v-else-if="productAddSending">Добавляется...</div>
           </form>
         </div>
       </div>
@@ -91,6 +91,17 @@ export default {
     },
     failed() {
       return this.$store.state.productLoadingFailed;
+    },
+    breadcrumbs() {
+      return {
+        0: {
+          title: this.category.title,
+          link: 'main',
+        },
+        1: {
+          title: this.product.title,
+        },
+      };
     },
   },
   methods: {

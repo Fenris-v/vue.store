@@ -1,6 +1,6 @@
 export default function itemDeclination(amount) {
   if (!Number(amount)) {
-    return 'Произошла ошибка';
+    return 'Корзина пуста';
   }
 
   if (amount % 10 === 0

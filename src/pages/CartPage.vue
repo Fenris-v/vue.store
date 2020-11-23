@@ -1,18 +1,7 @@
 <template>
   <main class="content container">
     <div class="content__top">
-      <ul class="breadcrumbs">
-        <li class="breadcrumbs__item">
-          <router-link class="breadcrumbs__link" :to="{name: 'main'}">
-            Каталог
-          </router-link>
-        </li>
-        <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link">
-            Корзина
-          </a>
-        </li>
-      </ul>
+      <BaseBreadcrumbs :list="breadcrumbs" />
 
       <h1 class="content__title">
         Корзина
@@ -36,9 +25,10 @@
             Итого: <span>{{ total | numberFormatter }} ₽</span>
           </p>
 
-          <button class="cart__button button button--primery" type="submit">
+          <router-link tag="button" :to="{ name: 'order' }"
+                       class="cart__button button button--primery" type="submit">
             Оформить заказ
-          </button>
+          </router-link>
         </div>
       </form>
     </section>
@@ -47,23 +37,21 @@
 
 <script>
 import CartList from '@/components/Cart/CartList.vue';
-import { mapGetters } from 'vuex';
-import numberFormatter from '@/helpers/numberFormatter';
-import itemDeclination from '@/helpers/itemDeclination';
+import cartProductsMixin from '@/mixins/cartProductsMixin';
+import BaseBreadcrumbs from '@/components/Base/BaseBreadcrumbs.vue';
 
 export default {
   name: 'CartPage',
-  components: { CartList },
-  filters: {
-    numberFormatter,
-    itemDeclination,
-  },
+  components: { BaseBreadcrumbs, CartList },
+  mixins: [cartProductsMixin],
   computed: {
-    ...mapGetters({
-      products: 'getProducts',
-      total: 'totalPrice',
-      amount: 'totalAmount',
-    }),
+    breadcrumbs() {
+      return {
+        0: {
+          title: 'Корзина',
+        },
+      };
+    },
   },
 };
 </script>
